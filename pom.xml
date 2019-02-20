@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+		http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>14.0.0</version>
+		<relativePath />
+	</parent>
+
+	<groupId>de.ovgu.imt</groupId>
+	<artifactId>Den_File_Opener</artifactId>
+	<version>1.0.23</version>
+
+	<name>DEN File Openner</name>
+	<description>ImageJ 1.x plugin to open files in DEN format</description>
+	<url>https://gitlab.stimulate.ovgu.de/vojtech.kulvait/den-file-opener</url>
+	<inceptionYear>2019</inceptionYear>
+	<organization>
+		<name>Institut für Medizintechnik, Otto-von-Guericke-Universität Magdeburg</name>
+		<url>http://www.imt.ovgu.de/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE V3</name>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>kulvait</id>
+			<name>Vojtěch Kulvait</name>
+			<url>https://scholar.google.cz/citations?user=rsOToBIAAAAJ</url>
+			<roles>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Vojtěch Kulvait</name>
+			<url>https://scholar.google.cz/citations?user=rsOToBIAAAAJ</url>
+		</contributor>
+	</contributors>
+	<scm>
+		<connection>scm:git:ssh://git@gitlab.stimulate.ovgu.de:2200/vojtech.kulvait/den-file-opener.git</connection>
+		<developerConnection>scm:git:ssh://git@gitlab.stimulate.ovgu.de:2200/vojtech.kulvait/den-file-opener.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://gitlab.stimulate.ovgu.de/vojtech.kulvait/den-file-opener</url>
+	</scm>
+	<mailingLists>
+		<mailingList>
+			<name>Dev null</name>
+			<archive>/dev/null</archive>
+		</mailingList>
+	</mailingLists>
+	<issueManagement>
+		<system>GitLab Issues</system>
+		<url>https://gitlab.stimulate.ovgu.de/vojtech.kulvait/den-file-opener/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>None</system>
+	</ciManagement>
+
+	<properties>
+		<package-name>de.ovgu.lmt.imagej.denfileopener</package-name>
+		<main-class>de.ovgu.lmt.imagej.denfileopener.Den_File_Opener</main-class>
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.copyrightOwners>Vojtěch Kulvait</license.copyrightOwners>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		</dependency>
+	</dependencies>
+</project>
