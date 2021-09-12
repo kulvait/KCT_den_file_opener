@@ -5,10 +5,10 @@ How to use this plugin
 
 Clone the repository
 
-* `git clone ssh://git@gitlab.stimulate.ovgu.de:2200/vojtech.kulvait/den-file-opener.git`
+* `git clone https://github.com/kulvait/KCT_den_file_opener.git`
 
 Then:
 
-1. Install maven by `apt-get install maven`
-2. Run `mvn` command
-3. Copy jar file from target directory to ~/.imagej/plugins 
+Install maven by `apt-get install maven`
+Run `mvn` command
+Copy jar file from target directory to ~/.imagej/plugins 

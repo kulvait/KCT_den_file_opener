@@ -14,15 +14,15 @@
 
 	<groupId>de.ovgu.imt</groupId>
 	<artifactId>Den_File_Opener</artifactId>
-	<version>1.0.25</version>
+	<version>1.1.1</version>
 
 	<name>DEN File Openner</name>
 	<description>ImageJ 1.x plugin to open files in DEN format</description>
-	<url>https://gitlab.stimulate.ovgu.de/vojtech.kulvait/den-file-opener</url>
+	<url>https://github.com/kulvait/KCT_den_file_opener</url>
 	<inceptionYear>2019</inceptionYear>
 	<organization>
-		<name>Institut für Medizintechnik, Otto-von-Guericke-Universität Magdeburg</name>
-		<url>http://www.imt.ovgu.de/</url>
+		<name>Vojtech Kulvait</name>
+		<url>kulvait.com</url>
 	</organization>
 	<licenses>
 		<license>
@@ -52,10 +52,10 @@
 		</contributor>
 	</contributors>
 	<scm>
-		<connection>scm:git:ssh://git@gitlab.stimulate.ovgu.de:2200/vojtech.kulvait/den-file-opener.git</connection>
-		<developerConnection>scm:git:ssh://git@gitlab.stimulate.ovgu.de:2200/vojtech.kulvait/den-file-opener.git</developerConnection>
+		<connection>scm:git:https://github.com/kulvait/KCT_den_file_opener.git</connection>
+		<developerConnection>scm:git:git@github.com:kulvait/KCT_den_file_opener.git</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://gitlab.stimulate.ovgu.de/vojtech.kulvait/den-file-opener</url>
+		<url>https://github.com/kulvait/KCT_den_file_opener</url>
 	</scm>
 	<mailingLists>
 		<mailingList>
@@ -65,16 +65,16 @@
 	</mailingLists>
 	<issueManagement>
 		<system>GitLab Issues</system>
-		<url>https://gitlab.stimulate.ovgu.de/vojtech.kulvait/den-file-opener/issues</url>
+		<url>https://github.com/kulvait/KCT_den_file_opener/issues</url>
 	</issueManagement>
 	<ciManagement>
 		<system>None</system>
 	</ciManagement>
 
 	<properties>
-		<package-name>de.ovgu.lmt.imagej.denfileopener</package-name>
-		<main-class>de.ovgu.lmt.imagej.denfileopener.Den_File_Opener</main-class>
-		<license.licenseName>bsd_2</license.licenseName>
+		<package-name>com.kulvait.kct.imagej.denfileopener</package-name>
+		<main-class>com.kulvait.kct.imagej.denfileopener.Den_File_Opener</main-class>
+		<license.licenseName>gpl_3</license.licenseName>
 		<license.copyrightOwners>Vojtěch Kulvait</license.copyrightOwners>
 	</properties>
 
