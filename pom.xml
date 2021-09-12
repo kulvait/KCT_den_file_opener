@@ -12,8 +12,8 @@
 		<relativePath />
 	</parent>
 
-	<groupId>de.ovgu.imt</groupId>
-	<artifactId>Den_File_Opener</artifactId>
+	<groupId>com.kulvait.kct</groupId>
+	<artifactId>KCT_Den_File_Opener</artifactId>
 	<version>1.1.1</version>
 
 	<name>DEN File Openner</name>
