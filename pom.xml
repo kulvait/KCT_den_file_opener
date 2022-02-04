@@ -14,7 +14,7 @@
 
 	<groupId>com.kulvait.kct</groupId>
 	<artifactId>KCT_Den_File_Opener</artifactId>
-	<version>1.1.1</version>
+	<version>1.2.1</version>
 
 	<name>DEN File Openner</name>
 	<description>ImageJ 1.x plugin to open files in DEN format</description>
@@ -73,7 +73,7 @@
 
 	<properties>
 		<package-name>com.kulvait.kct.imagej.denfileopener</package-name>
-		<main-class>com.kulvait.kct.imagej.denfileopener.Den_File_Opener</main-class>
+		<main-class>com.kulvait.kct.imagej.denfileopener.DenFileOpener</main-class>
 		<license.licenseName>gpl_3</license.licenseName>
 		<license.copyrightOwners>Vojtěch Kulvait</license.copyrightOwners>
 	</properties>
