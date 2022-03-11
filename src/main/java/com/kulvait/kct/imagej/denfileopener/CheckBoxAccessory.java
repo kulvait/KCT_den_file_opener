@@ -165,6 +165,13 @@ public class CheckBoxAccessory extends JComponent implements PropertyChangeListe
             {
                 virtualCheckBox.setVisible(true);
             }
+            if(inf.elementCount<32768)
+            {
+            	virtualCheckBox.setSelected(false);
+            }else
+            {
+            	virtualCheckBox.setSelected(true);
+            }
             dimInfo.setText(dimString);
         } else
         {

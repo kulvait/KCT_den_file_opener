@@ -75,18 +75,44 @@ public class DenFileInfo
             // https://en.wikipedia.org/wiki/Two%27s_complement
             if(header0 == 0 && byteSize > 6)
             {
+                int header3 = buffer.getShort() & 0xffff;
+                int header4 = buffer.getShort() & 0xffff;
                 extendedDEN = true;
-                DIMCOUNT = (header1 & DIM_EXTHEADER1_MASK);
-                elementSize = ((header1 & ELMLEN_EXTHEADER1_MASK) >> 4);
-                dataByteOffset = 6 + 4 * DIMCOUNT;
+                DIMCOUNT = header1;
+                elementSize = header2;
+                xmajor = (header3 == 0);
+                elementType = DenDataType.values()[header4];
+                dataByteOffset = 4096;
                 for(int i = 0; i != DIMCOUNT; i++)
                 {
                     dim[i] = (buffer.getInt() & 0xffffffffL);
                 }
-                dimy = buffer.getInt() & 0xffffffffL; // Width
-                dimx = buffer.getInt() & 0xffffffffL; // Height
-                dimz = buffer.getInt() & 0xffffffffL;
-                xmajor = ((header1 & YMAJOR_EXTHEADER2_MASK) == 0);
+                if(DIMCOUNT == 0)
+                {
+                    dimx = 0;
+                    dimy = 0;
+                    dimz = 0;
+                } else if(DIMCOUNT == 1)
+                {
+                    dimx = dim[0]; // Height
+                    dimy = 1;
+                    dimz = 1;
+                } else if(DIMCOUNT == 2)
+                {
+                    dimx = dim[0]; // Height
+                    dimy = dim[1]; // Width
+                    dimz = 1;
+                } else
+                {
+                    dimx = dim[0]; // Height
+                    dimy = dim[1]; // Width
+                    dimz = dim[2];
+                    // Flat indexing for more than 3D arrays
+                    for(int i = 3; i < DIMCOUNT; i++)
+                    {
+                        dimz = dimz * dim[i];
+                    }
+                }
             } else
             {
                 extendedDEN = false;
@@ -132,10 +158,6 @@ public class DenFileInfo
                     validDEN = false;
                     return;
                 }
-            } else
-            {
-                int typebyte = header1 & 0xff;
-                elementType = DenDataType.values()[typebyte];
             }
             elementSize = elementType.getSize();
             if(dataByteOffset + elementSize * elementCount == byteSize)

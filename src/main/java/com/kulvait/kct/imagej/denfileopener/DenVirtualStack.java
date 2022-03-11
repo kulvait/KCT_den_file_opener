@@ -99,13 +99,12 @@ public class DenVirtualStack extends ImageStack
 
     public Object getPixels(int n)
     {
-
-        if(n - 1 > dimz)
+        if(n > dimz)
         {
             throw new RuntimeException(
                 String.format("Illegal acces to the slice %d/%d", n - 1, dimz));
         }
-        long pos = inf.getDataByteOffset() + inf.getElementSize() * (n - 1) * dimImg;
+        long pos = inf.getDataByteOffset() + inf.getElementSize() * (long)(n - 1) * (long)dimImg;
         MappedByteBuffer buf;
         try
         {
