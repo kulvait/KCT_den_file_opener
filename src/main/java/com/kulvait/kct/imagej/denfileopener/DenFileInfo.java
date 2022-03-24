@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
+import java.nio.Buffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
@@ -126,7 +127,8 @@ public class DenFileInfo
                 dimz = header2;
                 xmajor = true;
             }
-            buffer.clear();
+//Problem https://stackoverflow.com/questions/48693695/java-nio-buffer-not-loading-clear-method-on-runtime
+            ((Buffer)buffer).clear();
             inChannel.close();
             df.close();
             elementCount = dimx * dimy * dimz;
