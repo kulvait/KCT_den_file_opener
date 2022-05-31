@@ -10,8 +10,8 @@ package com.kulvait.kct.imagej.denfileopener;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteOrder;
 import java.nio.Buffer;
+import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
@@ -56,6 +56,7 @@ public class DenFileInfo
         Arrays.fill(dim, 1);
         if(byteSize < 6)
         {
+            System.out.printf("Invalid DEN: byteSize < 6");
             validDEN = false;
             return;
         }
@@ -108,10 +109,12 @@ public class DenFileInfo
                     dimx = dim[0]; // Height
                     dimy = dim[1]; // Width
                     dimz = dim[2];
+                    System.out.printf("dimx=%d dimy=%d dimz=%d\n", dimx, dimy, dimz);
                     // Flat indexing for more than 3D arrays
                     for(int i = 3; i < DIMCOUNT; i++)
                     {
                         dimz = dimz * dim[i];
+                        System.out.printf("dimz=%d\n", dimz);
                     }
                 }
             } else
@@ -142,6 +145,8 @@ public class DenFileInfo
             {
                 if((byteSize - dataByteOffset) % elementCount != 0)
                 {
+                    System.out.printf(
+                        "Invalid legacy DEN: (byteSize - dataByteOffset) % elementCount != 0");
                     validDEN = false;
                     return;
                 }
@@ -157,6 +162,7 @@ public class DenFileInfo
                     elementType = DenDataType.FLOAT64;
                 } else
                 {
+                    System.out.printf("Invalid legacy DEN: elementSize=%d", elementSize);
                     validDEN = false;
                     return;
                 }
@@ -167,10 +173,14 @@ public class DenFileInfo
                 validDEN = true;
             } else
             {
+                System.out.printf(
+                    "Invalid DEN: size check dataByteOffset=%d elementSize=%d elementCount=%d byteSize=%d\n",
+                    dataByteOffset, elementSize, elementCount, byteSize);
                 validDEN = false;
             }
         } catch(IOException e)
         {
+            System.out.printf("Invalid DEN: IOException");
             validDEN = false;
         }
     }
