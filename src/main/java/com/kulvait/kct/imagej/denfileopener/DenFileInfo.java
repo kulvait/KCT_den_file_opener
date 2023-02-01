@@ -3,7 +3,7 @@
  * Author: Vojtěch Kulvait
  * Licence: GNU GPL3
  * Description : Class to get information about legacy or extended DEN
- * Date: 2022
+ * Date: 2023
  ******************************************************************************/
 package com.kulvait.kct.imagej.denfileopener;
 

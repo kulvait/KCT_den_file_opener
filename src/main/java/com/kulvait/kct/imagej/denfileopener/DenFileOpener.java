@@ -8,12 +8,6 @@
  ******************************************************************************/
 package com.kulvait.kct.imagej.denfileopener;
 
-import java.awt.EventQueue;
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.JFileChooser;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -21,6 +15,11 @@ import ij.io.FileInfo;
 import ij.io.FileOpener;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
+import java.awt.EventQueue;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.JFileChooser;
+import java.lang.reflect.InvocationTargetException;
 
 /**	Uses the JFileChooser from Swing to open one or more raw images.
          The "Open All Files in Folder" check box in the dialog is ignored. */
@@ -34,15 +33,24 @@ public class DenFileOpener implements PlugIn
     {
         try
         {
-            openFiles();
+            boolean useVirtualStack;
+            if(arg.equals(""))
+            {
+                openFilesDialog();
+                useVirtualStack = cba.isBoxSelected();
+            } else
+            {
+                file = new File(arg);
+                useVirtualStack = true;
+            }
+            openDen(useVirtualStack);
         } catch(IOException e)
         {
-            e.printStackTrace();
-            throw new RuntimeException(String.format("ERROR"));
+            System.out.printf("%s ERROR", e.toString());
         }
     }
 
-    public void openFiles() throws IOException
+    public void openFilesDialog()
     {
         try
         {
@@ -81,15 +89,23 @@ public class DenFileOpener implements PlugIn
                     directory = fc.getCurrentDirectory().getPath() + File.separator;
                 }
             });
-        } catch(Exception e)
+            if(cba == null)
+            {
+                file = null;
+            }
+        } catch(InterruptedException e)
         {
+            System.out.printf("%s ERROR", e.toString());
         }
-        if(file == null || cba == null)
-        {
-            return;
-        }
+	catch(InvocationTargetException e)
+	{
+            System.out.printf("%s ERROR", e.toString());
+	}
+    }
+
+    private void openDen(boolean useVirtualStack) throws IOException
+    {
         DenFileInfo inf = new DenFileInfo(file);
-        boolean useVirtualStack = cba.isBoxSelected();
         if(!inf.isValidDEN())
         {
             throw new RuntimeException(String.format("File %s is not valid DEN!", file.getName()));

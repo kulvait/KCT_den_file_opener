@@ -21,7 +21,7 @@ For usage examples go to [KCT framework wiki](https://kulvait.github.io/KCT_doc/
 
 When there is no other licensing and/or copyright information in the source files of this project, the following apply for the source files:
 
-Copyright (C) 2018-2022 Vojtěch Kulvait
+Copyright (C) 2018-2023 Vojtěch Kulvait
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
