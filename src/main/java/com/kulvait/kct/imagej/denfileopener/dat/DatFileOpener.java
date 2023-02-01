@@ -1,16 +1,17 @@
-/*******************************************************************************
+/****************************************************************************
  * Project : KCT ImageJ plugin to open DEN files
  * Author: Vojtěch Kulvait
  * Licence: GNU GPL3
  * Description : Based on the implementation of the raw file opener for ImageJ
  * https://imagej.nih.gov/ij/plugins/raw-file-opener.html.
- * Date: 2019-2022
+ * Date: 2019-2023
  ******************************************************************************/
-package com.kulvait.kct.imagej.denfileopener;
+package com.kulvait.kct.imagej.denfileopener.dat;
 
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
+import com.kulvait.kct.imagej.denfileopener.DenDataType;
 
 import javax.swing.JFileChooser;
 
@@ -24,11 +25,11 @@ import ij.plugin.PlugIn;
 
 /**	Uses the JFileChooser from Swing to open one or more raw images.
          The "Open All Files in Folder" check box in the dialog is ignored. */
-public class DenFileOpener implements PlugIn
+public class DatFileOpener implements PlugIn
 {
     static private String directory;
     private File file;
-    private CheckBoxAccessory cba;
+    private CheckBoxDat cba;
 
     public void run(String arg)
     {
@@ -50,12 +51,12 @@ public class DenFileOpener implements PlugIn
                 public void run()
                 {
                     JFileChooser fc = new JFileChooser();
-                    fc.setDialogTitle("Open DEN file...");
-                    fc.setAccessory(new CheckBoxAccessory(fc));
+                    fc.setDialogTitle("Open DAT file...");
+                    fc.setAccessory(new CheckBoxDat(fc));
                     fc.setMultiSelectionEnabled(false);
                     if(directory == null)
                     {
-                        directory = Prefs.getString(".options.denlastdir");
+                        directory = Prefs.getString(".options.datlastdir");
                     }
                     if(directory == null)
                     {
@@ -77,7 +78,7 @@ public class DenFileOpener implements PlugIn
                     if(returnVal != JFileChooser.APPROVE_OPTION)
                         return;
                     file = fc.getSelectedFile();
-                    cba = (CheckBoxAccessory)fc.getAccessory();
+                    cba = (CheckBoxDat)fc.getAccessory();
                     directory = fc.getCurrentDirectory().getPath() + File.separator;
                 }
             });
@@ -88,18 +89,18 @@ public class DenFileOpener implements PlugIn
         {
             return;
         }
-        DenFileInfo inf = new DenFileInfo(file);
+        DatFileInfo inf = new DatFileInfo(file);
         boolean useVirtualStack = cba.isBoxSelected();
-        if(!inf.isValidDEN())
+        if(!inf.isValidDAT())
         {
-            throw new RuntimeException(String.format("File %s is not valid DEN!", file.getName()));
+            throw new RuntimeException(String.format("File %s is not valid DAT!", file.getName()));
         } else
         {
-            OpenDialog.setLastDirectory(directory);
-            Prefs.set("options.denlastdir", directory);
+            //OpenDialog.setLastDirectory(directory);
+            Prefs.set("options.datlastdir", directory);
             Prefs.savePreferences();
             System.out.println(
-                String.format("Storing directory %s.", Prefs.getString(".options.denlastdir")));
+                String.format("Storing directory %s.", Prefs.getString(".options.datlastdir")));
         }
         FileInfo fi = new FileInfo();
         fi.fileFormat = FileInfo.RAW;
@@ -136,7 +137,7 @@ public class DenFileOpener implements PlugIn
         ImagePlus img;
         if(useVirtualStack)
         {
-            img = new ImagePlus(file.getName(), new DenVirtualStack(file));
+            img = new ImagePlus(file.getName(), new DatVirtualStack(file));
         } else
         {
             FileOpener fo = new FileOpener(fi);

@@ -7,7 +7,7 @@
  * Memory representation is always float independent of type.
  * Date: 2022
  ******************************************************************************/
-package com.kulvait.kct.imagej.denfileopener;
+package com.kulvait.kct.imagej.denfileopener.dat;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +15,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import com.kulvait.kct.imagej.denfileopener.DenDataType;
 
 import ij.ImageStack;
 import ij.process.FloatProcessor;
@@ -25,10 +26,10 @@ import ij.process.ImageProcessor;
 // ImageJ processes just these four bit depths and corresponding types 8=byte, 16=short, 24=RGB,
 // 32=float, see https://forum.image.sc/t/how-to-obtain-an-integer-image/1401
 
-public class DenVirtualStack extends ImageStack
+public class DatVirtualStack extends ImageStack
 {
     File f;
-    DenFileInfo inf;
+    DatFileInfo inf;
     RandomAccessFile df;
     FileChannel inChannel;
     int dimx, dimy, dimz;
@@ -36,13 +37,13 @@ public class DenVirtualStack extends ImageStack
     DenDataType typ;
     float[] pixelArray;
 
-    DenVirtualStack(File f) throws IOException
+    DatVirtualStack(File f) throws IOException
     {
         this.f = f;
-        this.inf = new DenFileInfo(f);
-        if(!inf.isValidDEN())
+        this.inf = new DatFileInfo(f);
+        if(!inf.isValidDAT())
         {
-            throw new RuntimeException(String.format("File %s is not valid DEN!", f.getName()));
+            throw new RuntimeException(String.format("File %s is not valid DAT!", f.getName()));
         }
 
         this.df = new RandomAccessFile(f, "r");

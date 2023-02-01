@@ -5,7 +5,7 @@
  * Description : Class to add preview of DEN file to JFileChooser
  * Date: 2022
  ******************************************************************************/
-package com.kulvait.kct.imagej.denfileopener;
+package com.kulvait.kct.imagej.denfileopener.dat;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -20,7 +20,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
-public class CheckBoxAccessory extends JComponent implements PropertyChangeListener
+public class CheckBoxDat extends JComponent implements PropertyChangeListener
 {
 
     private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class CheckBoxAccessory extends JComponent implements PropertyChangeListe
     int checkBoxWidth = preferredWidth;
     int checkBoxHeight = 20;
 
-    public CheckBoxAccessory()
+    public CheckBoxDat()
     {
         setPreferredSize(new Dimension(preferredWidth, preferredHeight));
         setLayout(new GridBagLayout());
@@ -89,7 +89,7 @@ public class CheckBoxAccessory extends JComponent implements PropertyChangeListe
         this.setVisible(false);
     }
 
-    public CheckBoxAccessory(JFileChooser fc)
+    public CheckBoxDat(JFileChooser fc)
     {
         this();
         fc.addPropertyChangeListener(this);
@@ -136,16 +136,10 @@ public class CheckBoxAccessory extends JComponent implements PropertyChangeListe
 
     public void updateInfo(File f)
     {
-        DenFileInfo inf = new DenFileInfo(f);
-        if(inf.isValidDEN())
+        DatFileInfo inf = new DatFileInfo(f);
+        if(inf.isValidDAT())
         {
-            if(inf.isExtendedDEN())
-            {
-                nameInfo.setText("Extended DEN.");
-            } else
-            {
-                nameInfo.setText("Legacy DEN.");
-            }
+            nameInfo.setText(inf.getFirstLine());
             int DIMCOUNT = inf.getDIMCOUNT();
             typeInfo.setText(String.format("%dD %s", DIMCOUNT, inf.getElementType().name()));
             String dimString;
@@ -174,7 +168,7 @@ public class CheckBoxAccessory extends JComponent implements PropertyChangeListe
             dimInfo.setText(dimString);
         } else
         {
-            nameInfo.setText("Not DEN");
+            nameInfo.setText("Not DAN");
             typeInfo.setText("");
             dimInfo.setText("");
             virtualCheckBox.setVisible(false);
