@@ -18,8 +18,8 @@ import ij.plugin.PlugIn;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
-import javax.swing.JFileChooser;
 import java.lang.reflect.InvocationTargetException;
+import javax.swing.JFileChooser;
 
 /**	Uses the JFileChooser from Swing to open one or more raw images.
          The "Open All Files in Folder" check box in the dialog is ignored. */
@@ -96,11 +96,10 @@ public class DenFileOpener implements PlugIn
         } catch(InterruptedException e)
         {
             System.out.printf("%s ERROR", e.toString());
-        }
-	catch(InvocationTargetException e)
-	{
+        } catch(InvocationTargetException e)
+        {
             System.out.printf("%s ERROR", e.toString());
-	}
+        }
     }
 
     private void openDen(boolean useVirtualStack) throws IOException

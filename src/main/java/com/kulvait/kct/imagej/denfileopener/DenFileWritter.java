@@ -9,6 +9,16 @@
  ******************************************************************************/
 package com.kulvait.kct.imagej.denfileopener;
 
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.Prefs;
+import ij.WindowManager;
+import ij.io.FileInfo;
+import ij.io.FileOpener;
+import ij.io.OpenDialog;
+import ij.io.SaveDialog;
+import ij.plugin.PlugIn;
 import java.awt.EventQueue;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -21,18 +31,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JFileChooser;
-
-import ij.IJ;
-import ij.ImagePlus;
-import ij.Prefs;
-import ij.WindowManager;
-import ij.io.FileInfo;
-import ij.io.FileOpener;
-import ij.io.OpenDialog;
-import ij.io.SaveDialog;
-import ij.plugin.PlugIn;
 
 /**	Uses the JFileChooser from Swing to open one or more raw images.
          The "Open All Files in Folder" check box in the dialog is ignored. */
@@ -75,20 +74,20 @@ public class DenFileWritter implements PlugIn
             {
                 OutputStream output = new BufferedOutputStream(new FileOutputStream(path));
                 writeImageHeader(output);
-                Object[] stack = (Object[])fi.pixels;
+                ImageStack stack = imp.getStack();
                 for(int i = 0; i < fi.nImages; i++)
                 {
                     IJ.showStatus("Writing: " + (i + 1) + "/" + fi.nImages);
                     switch(fi.fileType)
                     {
                     case FileInfo.GRAY16_UNSIGNED:
-                        write16Image(output, (short[])stack[i]);
+                        write16Image(output, (short[])stack.getPixels(i+1));
                         break;
                     case FileInfo.GRAY32_FLOAT:
-                        writeFloatImage(output, (float[])stack[i]);
+                        writeFloatImage(output, (float[])stack.getPixels(i+1));
                         break;
                     case FileInfo.GRAY64_FLOAT:
-                        writeDoubleImage(output, (double[])stack[i]);
+                        writeDoubleImage(output, (double[])stack.getPixels(i+1));
                         break;
                     }
                     IJ.showProgress((double)(i + 1) / fi.nImages);

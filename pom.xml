@@ -14,7 +14,7 @@
 
 	<groupId>com.kulvait.kct</groupId>
 	<artifactId>KCT_Den_File_Opener</artifactId>
-	<version>1.5.1</version>
+	<version>1.5.9</version>
 
 	<name>DEN File Openner</name>
 	<description>ImageJ 1.x plugin to open files in DEN format</description>

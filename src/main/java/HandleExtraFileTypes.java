@@ -499,6 +499,9 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		if (name.endsWith(".den")) {
 			return tryPlugIn("com.kulvait.kct.imagej.denfileopener.DenFileOpener", path);
 		}
+		if (name.endsWith(".dat")) {
+			return tryPlugIn("com.kulvait.kct.imagej.denfileopener.dat.DatFileOpener", path);
+		}
 
 		return null;
 	}

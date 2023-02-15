@@ -8,13 +8,7 @@
  ******************************************************************************/
 package com.kulvait.kct.imagej.denfileopener.dat;
 
-import java.awt.EventQueue;
-import java.io.File;
-import java.io.IOException;
 import com.kulvait.kct.imagej.denfileopener.DenDataType;
-
-import javax.swing.JFileChooser;
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -22,6 +16,10 @@ import ij.io.FileInfo;
 import ij.io.FileOpener;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
+import java.awt.EventQueue;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.JFileChooser;
 
 /**	Uses the JFileChooser from Swing to open one or more raw images.
          The "Open All Files in Folder" check box in the dialog is ignored. */
@@ -35,15 +33,24 @@ public class DatFileOpener implements PlugIn
     {
         try
         {
-            openFiles();
+            boolean useVirtualStack;
+            if(arg.equals(""))
+            {
+                openFilesDialog();
+                useVirtualStack = cba.isBoxSelected();
+            } else
+            {
+                file = new File(arg);
+                useVirtualStack = true;
+            }
+            openDat(useVirtualStack);
         } catch(IOException e)
         {
-            e.printStackTrace();
-            throw new RuntimeException(String.format("ERROR"));
+            System.out.printf("%s ERROR", e.toString());
         }
     }
 
-    public void openFiles() throws IOException
+    public void openFilesDialog() throws IOException
     {
         try
         {
@@ -89,14 +96,17 @@ public class DatFileOpener implements PlugIn
         {
             return;
         }
+    }
+
+    private void openDat(boolean useVirtualStack) throws IOException
+    {
         DatFileInfo inf = new DatFileInfo(file);
-        boolean useVirtualStack = cba.isBoxSelected();
         if(!inf.isValidDAT())
         {
             throw new RuntimeException(String.format("File %s is not valid DAT!", file.getName()));
         } else
         {
-            //OpenDialog.setLastDirectory(directory);
+            // OpenDialog.setLastDirectory(directory);
             Prefs.set("options.datlastdir", directory);
             Prefs.savePreferences();
             System.out.println(
