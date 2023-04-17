@@ -64,7 +64,7 @@ public class DenFileWritter implements PlugIn
         IJ.showTime(imp, imp.getStartTime(), "Den Writter");
     }
 
-    void saveAsDEN(ImagePlus imp, String path)
+    private void saveAsDEN(ImagePlus imp, String path)
     {
         try
         {
@@ -73,7 +73,7 @@ public class DenFileWritter implements PlugIn
                || fi.fileType == FileInfo.GRAY32_FLOAT || fi.fileType == FileInfo.GRAY64_FLOAT)
             {
                 OutputStream output = new BufferedOutputStream(new FileOutputStream(path));
-                writeImageHeader(output);
+                writeImageHeader(output, fi.fileType);
                 ImageStack stack = imp.getStack();
                 for(int i = 0; i < fi.nImages; i++)
                 {
@@ -81,13 +81,13 @@ public class DenFileWritter implements PlugIn
                     switch(fi.fileType)
                     {
                     case FileInfo.GRAY16_UNSIGNED:
-                        write16Image(output, (short[])stack.getPixels(i+1));
+                        write16Image(output, (short[])stack.getPixels(i + 1));
                         break;
                     case FileInfo.GRAY32_FLOAT:
-                        writeFloatImage(output, (float[])stack.getPixels(i+1));
+                        writeFloatImage(output, (float[])stack.getPixels(i + 1));
                         break;
                     case FileInfo.GRAY64_FLOAT:
-                        writeDoubleImage(output, (double[])stack.getPixels(i+1));
+                        writeDoubleImage(output, (double[])stack.getPixels(i + 1));
                         break;
                     }
                     IJ.showProgress((double)(i + 1) / fi.nImages);
@@ -104,20 +104,61 @@ public class DenFileWritter implements PlugIn
         }
     }
 
-    void writeImageHeader(OutputStream out) throws IOException
+    private void uint16ToBuffer(int val, byte[] buffer, int initpos)
     {
-        byte[] buffer = new byte[6];
-        int val;
-        val = fi.width;
-        buffer[0] = (byte)val;
-        buffer[1] = (byte)(val >>> 8);
-        val = fi.height;
-        buffer[2] = (byte)val;
-        buffer[3] = (byte)(val >>> 8);
-        val = fi.nImages;
-        buffer[4] = (byte)val;
-        buffer[5] = (byte)(val >>> 8);
-        out.write(buffer, 0, 6);
+        buffer[initpos] = (byte)val;
+        buffer[initpos+1] = (byte)(val >>> 8);
+    }
+
+    private void uint32ToBuffer(int val, byte[] buffer, int initpos)
+    {
+        buffer[initpos] = (byte)val;
+        buffer[initpos+1] = (byte)(val >>> 8);
+        buffer[initpos+2] = (byte)(val >>> 16);
+        buffer[initpos+3] = (byte)(val >>> 24);
+    }
+
+    void writeImageHeader(OutputStream out, int fileType) throws IOException
+    {
+        byte[] buffer = new byte[4096];
+        uint16ToBuffer(0, buffer, 0);
+        uint16ToBuffer(3, buffer, 2); // Dimensions
+        switch(fileType)
+        {
+        case FileInfo.GRAY16_UNSIGNED:
+            uint16ToBuffer(2, buffer, 4); // Dimensions
+            break;
+        case FileInfo.GRAY32_FLOAT:
+            uint16ToBuffer(4, buffer, 4); // Dimensions
+            break;
+        case FileInfo.GRAY64_FLOAT:
+            uint16ToBuffer(8, buffer, 4); // Dimensions
+            break;
+        default:
+            throw new IOException("Uinimplemented filetype");
+        }
+        uint16ToBuffer(0, buffer, 6); // X-major
+        switch(fileType)
+        {
+        case FileInfo.GRAY16_UNSIGNED:
+            uint16ToBuffer(0, buffer, 8); // UINT16
+            break;
+        case FileInfo.GRAY32_FLOAT:
+            uint16ToBuffer(6, buffer, 8); // FLOAT32
+            break;
+        case FileInfo.GRAY64_FLOAT:
+            uint16ToBuffer(7, buffer, 8); // FLOAT64
+            break;
+        default:
+            throw new IOException("Uinimplemented filetype");
+        }
+        int dimx = fi.width;
+        int dimy = fi.height;
+        int dimz = fi.nImages;
+        uint32ToBuffer(dimx, buffer, 10);
+        uint32ToBuffer(dimy, buffer, 14);
+        uint32ToBuffer(dimz, buffer, 18);
+        out.write(buffer, 0, 4096);
     }
 
     void write16Image(OutputStream out, short[] pixels) throws IOException

@@ -49,9 +49,9 @@ public class DenVirtualStack extends ImageStack
         inChannel = df.getChannel();
 
         // Supports fast access, if from undefined dimension these are ones
-        dimx = (int)inf.getDim(0);
-        dimy = (int)inf.getDim(1);
-        dimz = (int)inf.getDim(2);
+        dimx = (int)inf.getDimx();
+        dimy = (int)inf.getDimy();
+        dimz = (int)inf.getDimz();
         dimImg = dimx * dimy;
         typ = inf.getElementType();
         pixelArray = new float[dimImg];

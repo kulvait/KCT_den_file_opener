@@ -36,7 +36,10 @@ public class DenFileOpener implements PlugIn
             boolean useVirtualStack;
             if(arg.equals(""))
             {
-                openFilesDialog();
+                if(openFilesDialog() == false)
+                {
+                    return;
+                }
                 useVirtualStack = cba.isBoxSelected();
             } else
             {
@@ -50,7 +53,7 @@ public class DenFileOpener implements PlugIn
         }
     }
 
-    public void openFilesDialog()
+    public boolean openFilesDialog()
     {
         try
         {
@@ -83,16 +86,14 @@ public class DenFileOpener implements PlugIn
                     }
                     int returnVal = fc.showOpenDialog(IJ.getInstance());
                     if(returnVal != JFileChooser.APPROVE_OPTION)
+                    {
                         return;
+                    }
                     file = fc.getSelectedFile();
                     cba = (CheckBoxAccessory)fc.getAccessory();
                     directory = fc.getCurrentDirectory().getPath() + File.separator;
                 }
             });
-            if(cba == null)
-            {
-                file = null;
-            }
         } catch(InterruptedException e)
         {
             System.out.printf("%s ERROR", e.toString());
@@ -100,6 +101,12 @@ public class DenFileOpener implements PlugIn
         {
             System.out.printf("%s ERROR", e.toString());
         }
+        if(cba == null || file == null)
+        {
+            file = null;
+            return false;
+        }
+        return true;
     }
 
     private void openDen(boolean useVirtualStack) throws IOException

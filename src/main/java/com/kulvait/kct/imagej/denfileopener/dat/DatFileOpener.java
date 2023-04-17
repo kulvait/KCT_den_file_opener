@@ -34,9 +34,13 @@ public class DatFileOpener implements PlugIn
         try
         {
             boolean useVirtualStack;
+            boolean fileSelected = true;
             if(arg.equals(""))
             {
-                openFilesDialog();
+                if(openFilesDialog() == false)
+                {
+                    return;
+                }
                 useVirtualStack = cba.isBoxSelected();
             } else
             {
@@ -50,7 +54,7 @@ public class DatFileOpener implements PlugIn
         }
     }
 
-    public void openFilesDialog() throws IOException
+    public boolean openFilesDialog() throws IOException
     {
         try
         {
@@ -83,7 +87,9 @@ public class DatFileOpener implements PlugIn
                     }
                     int returnVal = fc.showOpenDialog(IJ.getInstance());
                     if(returnVal != JFileChooser.APPROVE_OPTION)
+                    {
                         return;
+                    }
                     file = fc.getSelectedFile();
                     cba = (CheckBoxDat)fc.getAccessory();
                     directory = fc.getCurrentDirectory().getPath() + File.separator;
@@ -91,11 +97,13 @@ public class DatFileOpener implements PlugIn
             });
         } catch(Exception e)
         {
+            return false;
         }
         if(file == null || cba == null)
         {
-            return;
+            return false;
         }
+        return true;
     }
 
     private void openDat(boolean useVirtualStack) throws IOException
