@@ -24,26 +24,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LutApplier implements PlugIn
-{
+public class LutApplier implements PlugIn {
 
-    public void run(String arg)
-    {
+    public void run(String arg) {
 
-        if(arg.equals("asist"))
-        {
+        if (arg.equals("asist")) {
             applyAsist();
         }
-        if(arg.equals("grayscale"))
-        {
+        if (arg.equals("grayscale")) {
             applyGrayscale();
         }
     }
 
-    public void applyAsist()
-    {
-        try
-        {
+    public void applyAsist() {
+        try {
             byte[] r = new byte[256];
             byte[] g = new byte[256];
             byte[] b = new byte[256];
@@ -54,22 +48,19 @@ public class LutApplier implements PlugIn
             lf.getBlues(b);
             LUT lut = new LUT(r, g, b);
             WindowManager.getCurrentImage().setLut(lut);
-        } catch(IOException e)
-        {
+        } catch (IOException e) {
             System.out.printf("%s ERROR", e.toString());
         }
     }
 
-    public void applyGrayscale()
-    {
+    public void applyGrayscale() {
         byte[] r = new byte[256];
         byte[] g = new byte[256];
         byte[] b = new byte[256];
-        for(int i = 0; i != 256; i++)
-        {
-            r[i] = (byte)i;
-            g[i] = (byte)i;
-            b[i] = (byte)i;
+        for (int i = 0; i != 256; i++) {
+            r[i] = (byte) i;
+            g[i] = (byte) i;
+            b[i] = (byte) i;
         }
         LUT lut = new LUT(r, g, b);
         WindowManager.getCurrentImage().setLut(lut);

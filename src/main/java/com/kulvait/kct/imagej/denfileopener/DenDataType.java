@@ -21,6 +21,12 @@ public enum DenDataType {
     UINT8(1); // 8
 
     private final int byteSize;
-    private DenDataType(int byteSize) { this.byteSize = byteSize; }
-    public int getSize() { return byteSize; }
+
+    private DenDataType(int byteSize) {
+        this.byteSize = byteSize;
+    }
+
+    public int getSize() {
+        return byteSize;
+    }
 }

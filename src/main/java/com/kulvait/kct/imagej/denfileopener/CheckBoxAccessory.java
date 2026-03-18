@@ -5,6 +5,7 @@
  * Description : Class to add preview of DEN file to JFileChooser
  * Date: 2022
  ******************************************************************************/
+
 package com.kulvait.kct.imagej.denfileopener;
 
 import java.awt.Dimension;
@@ -20,8 +21,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
-public class CheckBoxAccessory extends JComponent implements PropertyChangeListener
-{
+public class CheckBoxAccessory extends JComponent implements PropertyChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,8 +41,7 @@ public class CheckBoxAccessory extends JComponent implements PropertyChangeListe
     int checkBoxWidth = preferredWidth;
     int checkBoxHeight = 20;
 
-    public CheckBoxAccessory()
-    {
+    public CheckBoxAccessory() {
         setPreferredSize(new Dimension(preferredWidth, preferredHeight));
         setLayout(new GridBagLayout());
         // Component initialization
@@ -89,91 +88,75 @@ public class CheckBoxAccessory extends JComponent implements PropertyChangeListe
         this.setVisible(false);
     }
 
-    public CheckBoxAccessory(JFileChooser fc)
-    {
+    public CheckBoxAccessory(JFileChooser fc) {
         this();
         fc.addPropertyChangeListener(this);
     }
 
-    public boolean isBoxSelected() { return virtualCheckBox.isSelected(); }
+    public boolean isBoxSelected() {
+        return virtualCheckBox.isSelected();
+    }
 
-    public void propertyChange(PropertyChangeEvent e)
-    {
+    public void propertyChange(PropertyChangeEvent e) {
         boolean update = false;
         String prop = e.getPropertyName();
 
         // If the directory changed, don't show a preview
-        if(JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop))
-        {
+        if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop)) {
             selectedFile = null;
             nameInfo.setText("N/A");
             this.setVisible(false);
             update = true;
             // If a file became selected, find out which one.
-        } else if(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(prop))
-        {
+        } else if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(prop)) {
             this.setVisible(true);
-            selectedFile = (File)e.getNewValue();
-            if(selectedFile != null)
-            {
+            selectedFile = (File) e.getNewValue();
+            if (selectedFile != null) {
                 updateInfo(selectedFile);
                 update = true;
-            } else
-            {
+            } else {
                 this.setVisible(false);
             }
-        } else
-        {
-            // JOptionPane.showMessageDialog(null, String.format("property=%s", prop));
+        } else {
+            // JOptionPane.showMessageDialog(null, String.format("property=%s",
+            // prop));
         }
 
         // Update the preview accordingly.
-        if(update && isShowing())
-        {
+        if (update && isShowing()) {
             repaint();
         }
     }
 
-    public void updateInfo(File f)
-    {
+    public void updateInfo(File f) {
         DenFileInfo inf = new DenFileInfo(f);
-        if(inf.isValidDEN())
-        {
-            if(inf.isExtendedDEN())
-            {
+        if (inf.isValidDEN()) {
+            if (inf.isExtendedDEN()) {
                 nameInfo.setText("Extended DEN.");
-            } else
-            {
+            } else {
                 nameInfo.setText("Legacy DEN.");
             }
             int DIMCOUNT = inf.getDIMCOUNT();
             typeInfo.setText(String.format("%dD %s", DIMCOUNT, inf.getElementType().name()));
             String dimString;
-            if(DIMCOUNT == 0)
-            {
+            if (DIMCOUNT == 0) {
                 dimString = "Empty dim";
-            } else
-            {
+            } else {
                 dimString = String.format("%d", inf.getDim(0));
-                for(int i = 1; i < DIMCOUNT; i++)
-                {
+                for (int i = 1; i < DIMCOUNT; i++) {
                     dimString = String.format("%sx%d", dimString, inf.getDim(i));
                 }
             }
-            if(DIMCOUNT > 2)
-            {
+            if (DIMCOUNT > 2) {
                 virtualCheckBox.setVisible(true);
             }
-            if(inf.elementCount < 32768)
-            {
+            if (inf.elementCount < 32768) {
                 virtualCheckBox.setSelected(false);
-            } else
-            {
+            } else {
                 virtualCheckBox.setSelected(true);
             }
             dimInfo.setText(dimString);
-        } else
-        {
+        } else {
             nameInfo.setText("Not DEN");
             typeInfo.setText("");
             dimInfo.setText("");
@@ -181,8 +164,7 @@ public class CheckBoxAccessory extends JComponent implements PropertyChangeListe
         }
     }
 
-    protected void paintComponent(Graphics g)
-    {
+    protected void paintComponent(Graphics g) {
         int componentWidth = getWidth();
         int componentHeight = getHeight();
         String debugStr = String.format("w=%d, h=%d", componentWidth, componentHeight);

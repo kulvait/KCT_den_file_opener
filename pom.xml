@@ -77,6 +77,60 @@
 		<license.licenseName>gpl_3</license.licenseName>
 		<license.copyrightOwners>Vojtěch Kulvait</license.copyrightOwners>
 	</properties>
+  
+  <build>
+    <plugins>
+      <!-- Compiler -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <!-- disable banning -->
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+              <fail>false</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+<!-- Spotless plugin for code formatting, run using mvn spotless:apply -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.40.0</version> <!-- use latest stable -->
+                <configuration>
+                    <java>
+                        <!-- Path to your Eclipse formatter XML -->
+                        <eclipse>
+                            <file>${project.basedir}/styles/eclipseStyle.xml</file>
+                        </eclipse>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+    </plugins>
+  </build>
 
 	<dependencies>
 		<dependency>

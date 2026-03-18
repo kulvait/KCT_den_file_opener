@@ -1,4 +1,4 @@
-ImageJ 1.x plugin to open [DEN files](https://kulvait.github.io/KCT_doc/den-format.html)
+ImageJ plugin to open [DEN files](https://kulvait.github.io/KCT_doc/den-format.html)
 
 How to use this plugin
 ======================
@@ -11,7 +11,20 @@ Then:
 
 Install maven by `apt-get install maven`
 Run `mvn` command
-Copy jar file from target directory to ~/.imagej/plugins 
+Copy jar file from target directory to `~/.imagej/plugins` and restart Fiji.
+
+
+## Building from source and code maintenance
+
+Proper build
+```bash
+mvn clean package -U
+```
+
+Code formating
+```bash
+mvn spotless:apply
+```
 
 ## Documentation
 
@@ -29,7 +42,7 @@ To find conflicting plugins just search for "Find Jar For Class" and then type "
 
 When there is no other licensing and/or copyright information in the source files of this project, the following apply for the source files:
 
-Copyright (C) 2018-2025 Vojtěch Kulvait
+Copyright (C) 2018-2026 Vojtěch Kulvait
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

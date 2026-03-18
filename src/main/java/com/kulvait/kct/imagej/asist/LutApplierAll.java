@@ -24,25 +24,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LutApplierAll implements PlugIn
-{
+public class LutApplierAll implements PlugIn {
 
-    public void run(String arg)
-    {
-        if(arg.equals("asist"))
-        {
+    public void run(String arg) {
+        if (arg.equals("asist")) {
             applyAsist();
         }
-        if(arg.equals("grayscale"))
-        {
+        if (arg.equals("grayscale")) {
             applyGrayscale();
         }
     }
 
-    private void applyAsist()
-    {
-        try
-        {
+    private void applyAsist() {
+        try {
             byte[] r = new byte[256];
             byte[] g = new byte[256];
             byte[] b = new byte[256];
@@ -53,31 +47,26 @@ public class LutApplierAll implements PlugIn
             lf.getBlues(b);
             LUT lut = new LUT(r, g, b);
             int[] imgids = WindowManager.getIDList();
-            for(int i = 0; i != imgids.length; i++)
-            {
+            for (int i = 0; i != imgids.length; i++) {
                 WindowManager.getImage(imgids[i]).setLut(lut);
             }
-        } catch(IOException e)
-        {
+        } catch (IOException e) {
             System.out.printf("%s ERROR\n", e.toString());
         }
     }
 
-    private void applyGrayscale()
-    {
+    private void applyGrayscale() {
         byte[] r = new byte[256];
         byte[] g = new byte[256];
         byte[] b = new byte[256];
-        for(int i = 0; i != 256; i++)
-        {
-            r[i] = (byte)i;
-            g[i] = (byte)i;
-            b[i] = (byte)i;
+        for (int i = 0; i != 256; i++) {
+            r[i] = (byte) i;
+            g[i] = (byte) i;
+            b[i] = (byte) i;
         }
         LUT lut = new LUT(r, g, b);
         int[] imgids = WindowManager.getIDList();
-        for(int i = 0; i != imgids.length; i++)
-        {
+        for (int i = 0; i != imgids.length; i++) {
             WindowManager.getImage(imgids[i]).setLut(lut);
         }
     }

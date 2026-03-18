@@ -33,29 +33,27 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 
-/**	Uses the JFileChooser from Swing to open one or more raw images.
-         The "Open All Files in Folder" check box in the dialog is ignored. */
-public class DenFileWritter implements PlugIn
-{
+/**
+ * Uses the JFileChooser from Swing to open one or more raw images.
+ * The "Open All Files in Folder" check box in the dialog is ignored.
+ */
+public class DenFileWritter implements PlugIn {
     static private String directory;
     private File file;
     private FileInfo fi;
 
-    public void run(String arg)
-    {
+    public void run(String arg) {
         String path = arg;
         ImagePlus imp = WindowManager.getCurrentImage();
-        if(imp == null)
-        {
+        if (imp == null) {
             IJ.noImage();
             return;
         }
-        if(arg.equals(""))
-        {
+        if (arg.equals("")) {
             SaveDialog sd = new SaveDialog("Save as DEN ...", imp.getTitle(), ".den");
             String dir = sd.getDirectory();
             String name = sd.getFileName();
-            if(name == null)
+            if (name == null)
                 return;
             path = dir + name;
         }
@@ -64,93 +62,80 @@ public class DenFileWritter implements PlugIn
         IJ.showTime(imp, imp.getStartTime(), "Den Writter");
     }
 
-    private void saveAsDEN(ImagePlus imp, String path)
-    {
-        try
-        {
+    private void saveAsDEN(ImagePlus imp, String path) {
+        try {
             fi = imp.getFileInfo();
-            if(fi.fileType == FileInfo.GRAY8 || fi.fileType == FileInfo.GRAY16_UNSIGNED
-               || fi.fileType == FileInfo.GRAY32_FLOAT || fi.fileType == FileInfo.GRAY64_FLOAT)
-            {
+            if (fi.fileType == FileInfo.GRAY8 || fi.fileType == FileInfo.GRAY16_UNSIGNED || fi.fileType == FileInfo.GRAY32_FLOAT || fi.fileType == FileInfo.GRAY64_FLOAT) {
                 OutputStream output = new BufferedOutputStream(new FileOutputStream(path));
                 writeImageHeader(output, fi.fileType);
                 ImageStack stack = imp.getStack();
-                for(int i = 0; i < fi.nImages; i++)
-                {
+                for (int i = 0; i < fi.nImages; i++) {
                     IJ.showStatus("Writing: " + (i + 1) + "/" + fi.nImages);
-                    switch(fi.fileType)
-                    {
-                    case FileInfo.GRAY16_UNSIGNED:
-                        write16Image(output, (short[])stack.getPixels(i + 1));
-                        break;
-                    case FileInfo.GRAY32_FLOAT:
-                        writeFloatImage(output, (float[])stack.getPixels(i + 1));
-                        break;
-                    case FileInfo.GRAY64_FLOAT:
-                        writeDoubleImage(output, (double[])stack.getPixels(i + 1));
-                        break;
+                    switch (fi.fileType) {
+                        case FileInfo.GRAY16_UNSIGNED:
+                            write16Image(output, (short[]) stack.getPixels(i + 1));
+                            break;
+                        case FileInfo.GRAY32_FLOAT:
+                            writeFloatImage(output, (float[]) stack.getPixels(i + 1));
+                            break;
+                        case FileInfo.GRAY64_FLOAT:
+                            writeDoubleImage(output, (double[]) stack.getPixels(i + 1));
+                            break;
                     }
-                    IJ.showProgress((double)(i + 1) / fi.nImages);
+                    IJ.showProgress((double) (i + 1) / fi.nImages);
                 }
                 output.close();
 
-            } else
-            {
+            } else {
                 IJ.error("Unrecognized file format!\n");
             }
-        } catch(IOException e)
-        {
+        } catch (IOException e) {
             IJ.error("An error occured writing the file.\n \n" + e);
         }
     }
 
-    private void uint16ToBuffer(int val, byte[] buffer, int initpos)
-    {
-        buffer[initpos] = (byte)val;
-        buffer[initpos+1] = (byte)(val >>> 8);
+    private void uint16ToBuffer(int val, byte[] buffer, int initpos) {
+        buffer[initpos] = (byte) val;
+        buffer[initpos + 1] = (byte) (val >>> 8);
     }
 
-    private void uint32ToBuffer(int val, byte[] buffer, int initpos)
-    {
-        buffer[initpos] = (byte)val;
-        buffer[initpos+1] = (byte)(val >>> 8);
-        buffer[initpos+2] = (byte)(val >>> 16);
-        buffer[initpos+3] = (byte)(val >>> 24);
+    private void uint32ToBuffer(int val, byte[] buffer, int initpos) {
+        buffer[initpos] = (byte) val;
+        buffer[initpos + 1] = (byte) (val >>> 8);
+        buffer[initpos + 2] = (byte) (val >>> 16);
+        buffer[initpos + 3] = (byte) (val >>> 24);
     }
 
-    void writeImageHeader(OutputStream out, int fileType) throws IOException
-    {
+    void writeImageHeader(OutputStream out, int fileType) throws IOException {
         byte[] buffer = new byte[4096];
         uint16ToBuffer(0, buffer, 0);
         uint16ToBuffer(3, buffer, 2); // Dimensions
-        switch(fileType)
-        {
-        case FileInfo.GRAY16_UNSIGNED:
-            uint16ToBuffer(2, buffer, 4); // Dimensions
-            break;
-        case FileInfo.GRAY32_FLOAT:
-            uint16ToBuffer(4, buffer, 4); // Dimensions
-            break;
-        case FileInfo.GRAY64_FLOAT:
-            uint16ToBuffer(8, buffer, 4); // Dimensions
-            break;
-        default:
-            throw new IOException("Uinimplemented filetype");
+        switch (fileType) {
+            case FileInfo.GRAY16_UNSIGNED:
+                uint16ToBuffer(2, buffer, 4); // Dimensions
+                break;
+            case FileInfo.GRAY32_FLOAT:
+                uint16ToBuffer(4, buffer, 4); // Dimensions
+                break;
+            case FileInfo.GRAY64_FLOAT:
+                uint16ToBuffer(8, buffer, 4); // Dimensions
+                break;
+            default:
+                throw new IOException("Uinimplemented filetype");
         }
         uint16ToBuffer(0, buffer, 6); // X-major
-        switch(fileType)
-        {
-        case FileInfo.GRAY16_UNSIGNED:
-            uint16ToBuffer(0, buffer, 8); // UINT16
-            break;
-        case FileInfo.GRAY32_FLOAT:
-            uint16ToBuffer(6, buffer, 8); // FLOAT32
-            break;
-        case FileInfo.GRAY64_FLOAT:
-            uint16ToBuffer(7, buffer, 8); // FLOAT64
-            break;
-        default:
-            throw new IOException("Uinimplemented filetype");
+        switch (fileType) {
+            case FileInfo.GRAY16_UNSIGNED:
+                uint16ToBuffer(0, buffer, 8); // UINT16
+                break;
+            case FileInfo.GRAY32_FLOAT:
+                uint16ToBuffer(6, buffer, 8); // FLOAT32
+                break;
+            case FileInfo.GRAY64_FLOAT:
+                uint16ToBuffer(7, buffer, 8); // FLOAT64
+                break;
+            default:
+                throw new IOException("Uinimplemented filetype");
         }
         int dimx = fi.width;
         int dimy = fi.height;
@@ -161,25 +146,22 @@ public class DenFileWritter implements PlugIn
         out.write(buffer, 0, 4096);
     }
 
-    void write16Image(OutputStream out, short[] pixels) throws IOException
-    {
+    void write16Image(OutputStream out, short[] pixels) throws IOException {
         int bytesWritten = 0;
         int size = fi.width * fi.height * 2;
         int count = 8192;
         byte[] buffer = new byte[count];
 
-        while(bytesWritten < size)
-        {
-            if((bytesWritten + count) > size)
+        while (bytesWritten < size) {
+            if ((bytesWritten + count) > size)
                 count = size - bytesWritten;
             int j = bytesWritten / 2;
             int value;
             // Little endian
-            for(int i = 0; i < count; i += 2)
-            {
+            for (int i = 0; i < count; i += 2) {
                 value = pixels[j];
-                buffer[i] = (byte)value;
-                buffer[i + 1] = (byte)(value >>> 8);
+                buffer[i] = (byte) value;
+                buffer[i + 1] = (byte) (value >>> 8);
                 j++;
             }
             out.write(buffer, 0, count);
@@ -187,26 +169,23 @@ public class DenFileWritter implements PlugIn
         }
     }
 
-    void writeFloatImage(OutputStream out, float[] pixels) throws IOException
-    {
+    void writeFloatImage(OutputStream out, float[] pixels) throws IOException {
         long bytesWritten = 0L;
         long size = 4L * fi.width * fi.height;
         int count = 8192;
         byte[] buffer = new byte[count];
         int tmp;
-        while(bytesWritten < size)
-        {
-            if((bytesWritten + count) > size)
-                count = (int)(size - bytesWritten);
-            int j = (int)(bytesWritten / 4L);
+        while (bytesWritten < size) {
+            if ((bytesWritten + count) > size)
+                count = (int) (size - bytesWritten);
+            int j = (int) (bytesWritten / 4L);
             // Little endian
-            for(int i = 0; i < count; i += 4)
-            {
+            for (int i = 0; i < count; i += 4) {
                 tmp = Float.floatToRawIntBits(pixels[j]);
-                buffer[i] = (byte)tmp;
-                buffer[i + 1] = (byte)(tmp >> 8);
-                buffer[i + 2] = (byte)(tmp >> 16);
-                buffer[i + 3] = (byte)(tmp >> 24);
+                buffer[i] = (byte) tmp;
+                buffer[i + 1] = (byte) (tmp >> 8);
+                buffer[i + 2] = (byte) (tmp >> 16);
+                buffer[i + 3] = (byte) (tmp >> 24);
                 j++;
             }
             out.write(buffer, 0, count);
@@ -214,30 +193,27 @@ public class DenFileWritter implements PlugIn
         }
     }
 
-    void writeDoubleImage(OutputStream out, double[] pixels) throws IOException
-    {
+    void writeDoubleImage(OutputStream out, double[] pixels) throws IOException {
         long bytesWritten = 0L;
         long size = 8L * fi.width * fi.height;
         int count = 8192;
         byte[] buffer = new byte[count];
         long tmp;
-        while(bytesWritten < size)
-        {
-            if((bytesWritten + count) > size)
-                count = (int)(size - bytesWritten);
-            int j = (int)(bytesWritten / 4L);
+        while (bytesWritten < size) {
+            if ((bytesWritten + count) > size)
+                count = (int) (size - bytesWritten);
+            int j = (int) (bytesWritten / 4L);
             // Little endian
-            for(int i = 0; i < count; i += 8)
-            {
+            for (int i = 0; i < count; i += 8) {
                 tmp = Double.doubleToRawLongBits(pixels[j]);
-                buffer[i] = (byte)tmp;
-                buffer[i + 1] = (byte)(tmp >> 8);
-                buffer[i + 2] = (byte)(tmp >> 16);
-                buffer[i + 3] = (byte)(tmp >> 24);
-                buffer[i + 4] = (byte)(tmp >> 32);
-                buffer[i + 5] = (byte)(tmp >> 40);
-                buffer[i + 6] = (byte)(tmp >> 48);
-                buffer[i + 7] = (byte)(tmp >> 56);
+                buffer[i] = (byte) tmp;
+                buffer[i + 1] = (byte) (tmp >> 8);
+                buffer[i + 2] = (byte) (tmp >> 16);
+                buffer[i + 3] = (byte) (tmp >> 24);
+                buffer[i + 4] = (byte) (tmp >> 32);
+                buffer[i + 5] = (byte) (tmp >> 40);
+                buffer[i + 6] = (byte) (tmp >> 48);
+                buffer[i + 7] = (byte) (tmp >> 56);
                 j++;
             }
             out.write(buffer, 0, count);
@@ -245,52 +221,41 @@ public class DenFileWritter implements PlugIn
         }
     }
 
-    public void openFiles()
-    {
-        try
-        {
+    public void openFiles() {
+        try {
             EventQueue.invokeAndWait(new Runnable() {
-                public void run()
-                {
+                public void run() {
                     JFileChooser fc = new JFileChooser();
                     fc.setMultiSelectionEnabled(false);
-                    if(directory == null)
-                    {
+                    if (directory == null) {
                         directory = Prefs.getString(".options.denlastdir");
                     }
-                    if(directory == null)
-                    {
+                    if (directory == null) {
                         directory = OpenDialog.getLastDirectory();
                     }
-                    if(directory == null)
-                    {
+                    if (directory == null) {
                         directory = OpenDialog.getDefaultDirectory();
                     }
-                    if(directory != null)
-                    {
+                    if (directory != null) {
                         fc.setCurrentDirectory(new File(directory));
                         System.out.println(String.format("Directory is %s", directory));
-                    } else
-                    {
+                    } else {
                         System.out.println("Directory is null");
                     }
                     int returnVal = fc.showOpenDialog(IJ.getInstance());
-                    if(returnVal != JFileChooser.APPROVE_OPTION)
+                    if (returnVal != JFileChooser.APPROVE_OPTION)
                         return;
                     file = fc.getSelectedFile();
                     directory = fc.getCurrentDirectory().getPath() + File.separator;
                     OpenDialog.setLastDirectory(directory);
                     Prefs.set("options.denlastdir", directory);
                     Prefs.savePreferences();
-                    System.out.println(String.format("Storing directory %s.",
-                                                     Prefs.getString(".options.denlastdir")));
+                    System.out.println(String.format("Storing directory %s.", Prefs.getString(".options.denlastdir")));
                 }
             });
-        } catch(Exception e)
-        {
+        } catch (Exception e) {
         }
-        if(file == null)
-        {
+        if (file == null) {
             return;
         }
         List<Integer> dim = analyzeDenFile(file);
@@ -306,46 +271,36 @@ public class DenFileWritter implements PlugIn
         fi.gapBetweenImages = 0;
         fi.intelByteOrder = true; // little endian
         fi.whiteIsZero = false; // can be adjusted
-        long totalunits = (long)dim.get(0) * dim.get(1) * dim.get(2);
-        if(totalunits == 0)
+        long totalunits = (long) dim.get(0) * dim.get(1) * dim.get(2);
+        if (totalunits == 0)
             throw new RuntimeException(
-                String.format("One or more dimensions are zero x=%d, y=%d, z=%d", dim.get(0),
-                              dim.get(1), dim.get(2)));
-        if((fileSize - 6) % totalunits != 0)
+                    String.format("One or more dimensions are zero x=%d, y=%d, z=%d", dim.get(0), dim.get(1), dim.get(2)));
+        if ((fileSize - 6) % totalunits != 0)
             throw new RuntimeException(String.format(
-                "Dimensions do not match actual size of file. The file %s is not in den format or is corrupted.",
-                file.getPath()));
+                                                     "Dimensions do not match actual size of file. The file %s is not in den format or is corrupted.", file.getPath()));
         long unitsize = (fileSize - 6) / totalunits;
         String typ;
-        if(unitsize == 1)
-        {
+        if (unitsize == 1) {
             fi.fileType = FileInfo.GRAY8;
             typ = "uint8";
-        } else if(unitsize == 2)
-        {
+        } else if (unitsize == 2) {
             fi.fileType = FileInfo.GRAY16_UNSIGNED;
             typ = "uint16";
-        } else if(unitsize == 4)
-        {
+        } else if (unitsize == 4) {
             fi.fileType = FileInfo.GRAY32_FLOAT;
             typ = "float32";
-        } else if(unitsize == 8)
-        {
+        } else if (unitsize == 8) {
             fi.fileType = FileInfo.GRAY64_FLOAT;
             typ = "float64";
-        } else
-        {
+        } else {
             throw new RuntimeException(String.format(
-                "The unit size of %d of the file %s does not match any number storage format used in den files.",
-                unitsize, file.getPath()));
+                                                     "The unit size of %d of the file %s does not match any number storage format used in den files.", unitsize, file.getPath()));
         }
-        System.out.println(String.format("%s with dimensions x=%d, y=%d, z=%d and type %s.",
-                                         file.getPath(), dim.get(0), dim.get(1), dim.get(2), typ));
+        System.out.println(String.format("%s with dimensions x=%d, y=%d, z=%d and type %s.", file.getPath(), dim.get(0), dim.get(1), dim.get(2), typ));
         FileOpener fo = new FileOpener(fi);
         ImagePlus img = fo.open(false);
-        if(img != null)
-        {
-            if(IJ.getVersion().compareTo("1.50e") >= 0)
+        if (img != null) {
+            if (IJ.getVersion().compareTo("1.50e") >= 0)
                 img.setIJMenuBar(true);
             img.setZ(dim.get(2) / 2);
             img.resetDisplayRange();
@@ -353,14 +308,11 @@ public class DenFileWritter implements PlugIn
         }
     }
 
-    public static List<Integer> analyzeDenFile(File f)
-    {
-        try
-        {
+    public static List<Integer> analyzeDenFile(File f) {
+        try {
             RandomAccessFile df = new RandomAccessFile(f, "r");
             FileChannel inChannel = df.getChannel();
-            MappedByteBuffer buffer
-                = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, Math.min(1024, inChannel.size()));
+            MappedByteBuffer buffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, Math.min(1024, inChannel.size()));
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             buffer.load();
             int ysize = buffer.getShort();
@@ -374,8 +326,7 @@ public class DenFileWritter implements PlugIn
             dimensions.add(ysize);
             dimensions.add(zsize);
             return dimensions;
-        } catch(IOException e)
-        {
+        } catch (IOException e) {
             return null;
         }
     }
